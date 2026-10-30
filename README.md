@@ -1,6 +1,6 @@
-# Smart Queue Management System — Phase 1 Prototype
+# Smart Queue Management System
 
-This repository contains the first working milestone of a Smart Queue Management System. The prototype focuses on customer registration, service selection, token generation, priority-based queue ordering, token tracking, and an initial waiting-time estimate.
+This repository contains the prototype of Smart Queue Management System. The prototype focuses on customer registration, service selection, token generation, priority-based queue ordering, token tracking, and an initial waiting-time estimate.
 
 ## Current scope
 
@@ -14,9 +14,6 @@ This repository contains the first working milestone of a Smart Queue Management
 - Estimated waiting time based on configured average service durations.
 - MySQL persistence through Spring Data JPA and Hibernate.
 
-## Not included in this milestone
-
-Staff login, staff dashboard, queue call/complete/skip controls, service administration, and the JSON queue API are deferred to later development milestones. The token model retains status values to support future development, but this prototype does not provide staff-side status management.
 
 ## Technology
 
@@ -74,13 +71,3 @@ The application inserts the predefined service catalogue when it starts. Hiberna
 Waiting tokens are sorted by priority rank (smaller rank means higher priority), then creation time, then database ID. This means priority takes precedence over arrival time, while customers within the same priority category retain FIFO order.
 
 The waiting-time value is an estimate, not a prediction. It sums the configured average service durations for customers ahead in the queue and includes a simple allowance for any currently serving token. Actual wait times can differ.
-
-## Development roadmap
-
-1. **Phase 1 — Prototype:** registration, token generation, priority ordering, tracking, and basic estimates.
-2. **Phase 2 — Queue administration:** staff authentication, staff dashboard, calling the next customer, and status management.
-3. **Phase 3 — Extended features:** service administration, API integration, stronger concurrency controls, improved estimates, and expanded tests.
-
-## Important notes
-
-This is a development prototype. Customers currently choose their own priority category; a production system should verify or assign priority through authorised staff. The waiting-time calculation is intentionally basic. The current queue ordering is performed in application code and is suitable for a small prototype, not an unbounded high-volume queue.
