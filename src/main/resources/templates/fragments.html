@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="nav" class="topbar">
+  <a class="brand" th:href="@{/}"><span class="brand-mark">Q</span><span>Queue<span class="brand-light">Desk</span></span></a>
+  <nav><a th:href="@{/register}">Get a token</a><a th:href="@{/track}">Track token</a><a th:href="@{/display}">Live queue</a></nav>
+</header>
+<footer th:fragment="footer" class="footer"><span>QueueDesk · Smart Queue Management</span><span>Simple, fair, and organized service.</span></footer>
+</body></html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main})}">
+<head><title>Get a token | QueueDesk</title></head><body><main>
+<div class="page-intro"><span class="eyebrow">CUSTOMER REGISTRATION</span><h1>Get your queue token</h1><p>Enter your details and select the service you need.</p></div>
+<div class="form-card"><form th:action="@{/register}" th:object="${customer}" method="post">
+<div class="form-alert" th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
+<div class="field"><label for="name">Full name</label><input id="name" type="text" th:field="*{name}" placeholder="e.g. Amandeep Singh" required maxlength="80"><small class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small></div>
+<div class="field"><label for="phone">Contact number <span class="optional">(optional)</span></label><input id="phone" type="tel" th:field="*{phone}" placeholder="Your contact number" maxlength="30"></div>
+<div class="field"><label for="serviceId">Service required</label><select id="serviceId" name="serviceId" required><option value="">Choose a service</option><option th:each="service : ${services}" th:value="${service.id}" th:text="${service.name + ' · around ' + service.averageMinutes + ' min'}"></option></select></div>
+<div class="field"><label for="priority">Priority category</label><select id="priority" name="priority" required><option th:each="priorityOption : ${priorities}" th:value="${priorityOption}" th:text="${priorityOption.label}"></option></select><small>Select the category that applies to you.</small></div>
+<button class="button button-primary button-wide" type="submit">Generate my token <span>→</span></button><p class="privacy-note">Your details are used to manage this service queue.</p>
+</form></div>
+</main></body></html>

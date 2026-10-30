@@ -1,0 +1,6 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main})}">
+<head><title>Track token | QueueDesk</title></head><body><main>
+<div class="page-intro"><span class="eyebrow">TOKEN LOOKUP</span><h1>Where are you in line?</h1><p>Enter the token number you received during registration.</p></div>
+<div class="form-card"><div class="form-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div><form th:action="@{/track}" method="post"><div class="field"><label for="tokenNumber">Token number</label><input id="tokenNumber" name="tokenNumber" placeholder="e.g. REG-GC-101" required maxlength="40"></div><button class="button button-primary button-wide" type="submit">Track my token →</button></form></div>
+</main></body></html>

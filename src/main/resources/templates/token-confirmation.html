@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main})}">
+<head><title>Your token | QueueDesk</title></head><body><main>
+<div class="confirmation-wrap"><div class="success-symbol">✓</div><span class="eyebrow">TOKEN CREATED</span><h1>You’re in the queue.</h1><p class="center-copy">Keep this token number handy. You can return to this page to check your status.</p>
+<div class="token-ticket"><span class="muted-label">YOUR TOKEN NUMBER</span><strong th:text="${token.tokenNumber}">REG-GC-101</strong><div class="ticket-divider"></div><div class="ticket-details"><div><span>Service</span><b th:text="${token.serviceType.name}">General Consultation</b></div><div><span>Priority</span><b th:text="${token.priority.label}">Regular Customer</b></div><div><span>Queue position</span><b th:text="${position == 0 ? 'Being served' : (position &lt; 0 ? 'Not waiting' : '#' + position)}">#1</b></div><div><span>Estimated wait</span><b th:text="${estimatedMinutes + ' min'}">0 min</b></div></div></div>
+<div class="hero-actions centered"><a class="button button-primary" th:href="@{/token/{number}(number=${token.tokenNumber})}">Refresh status ↻</a><a class="button button-plain" th:href="@{/display}">View live queue</a></div><p class="privacy-note">Waiting times are estimates and may change as the queue moves.</p></div>
+</main></body></html>
