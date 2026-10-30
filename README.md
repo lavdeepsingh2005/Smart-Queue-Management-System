@@ -1,73 +1,119 @@
 # Smart Queue Management System
 
-This repository contains the prototype of Smart Queue Management System. The prototype focuses on customer registration, service selection, token generation, priority-based queue ordering, token tracking, and an initial waiting-time estimate.
+This project is a Java-based queue management system designed for places like hospitals, banks, and college offices, where customers often have to wait for their turn.
 
-## Current scope
+The idea is to make the process easier by generating tokens and arranging customers based on their priority. I've started with the basic queue functionality and will be adding the staff-side features in later stages.
 
-- Customer registration with basic server-side validation.
-- Selection from a predefined list of services.
-- Token generation using the priority code, service code, and database-generated ID.
-- Three queue priorities: Emergency/VIP, Assisted, and Regular.
-- Priority ordering, with FIFO order within each priority.
-- Token lookup and queue-position display.
-- A public queue page that refreshes periodically.
-- Estimated waiting time based on configured average service durations.
-- MySQL persistence through Spring Data JPA and Hibernate.
+## Implementation
 
+The current version includes:
 
-## Technology
+- Customer registration with basic input validation.
+- A list of predefined services that customers can choose from.
+- Automatic token generation using the priority, service code, and database ID.
+- Three priority categories: Emergency/VIP, Assisted, and Regular.
+- Queue arrangement based on priority, while maintaining first-come-first-served order within each category.
+- A page where customers can check their token details and queue position.
+- A public page showing the current waiting queue, which refreshes periodically.
+- A basic waiting-time estimate using the average time assigned to each service.
+- MySQL database integration for storing customer and token details.
+
+## Features to be added
+
+The current version mainly covers the customer side and the basic queue logic. The following features are still to be added:
+
+- Staff login and authentication.
+- Staff dashboard for managing the queue.
+- Calling the next customer and updating token status.
+- Skipping or completing tokens.
+- Adding and managing services through the application.
+- JSON API for accessing queue information.
+
+The token model already includes status fields that can be used when these features are implemented.
+
+## Technologies 
 
 - Java 21
 - Spring Boot 3.4.5
-- Spring MVC and Thymeleaf
-- Spring Data JPA / Hibernate
+- Spring MVC
+- Thymeleaf
+- Spring Data JPA and Hibernate
 - MySQL 8
 - Maven
-- HTML, CSS, and a small amount of JavaScript
-- JUnit 5, Spring Boot Test, and H2 for tests
+- HTML, CSS and JavaScript
+- JUnit 5 and H2 for testing
 
-## Run locally
+## Running the project
 
-1. Install Java 21 and MySQL.
-2. Create the database:
+Make sure Java 21 and MySQL are installed before starting.
 
-   ```sql
-   CREATE DATABASE smart_queue;
-   ```
+**1. Create the database**
 
-3. From the project root, configure the connection. Example for a MySQL root account with a password:
+Open MySQL and run:
 
-   ```bash
-   export DB_URL='jdbc:mysql://localhost:3306/smart_queue'
-   export DB_USERNAME='root'
-   read -s "DB_PASSWORD?Enter your MySQL password: "
-   echo
-   export DB_PASSWORD
-   ```
+```sql
+CREATE DATABASE smart_queue;
+```
 
-   If your local MySQL account has no password, run `unset DB_PASSWORD` instead.
+**2. Open the project folder**
 
-4. Start the application:
+Navigate to the project directory in Terminal.
 
-   ```bash
-   chmod +x mvnw
-   ./mvnw spring-boot:run
-   ```
+**3. Set up the database connection**
 
-5. Open http://localhost:8080.
+For a MySQL root account with a password, run:
 
-The application inserts the predefined service catalogue when it starts. Hibernate updates the development schema using the entity mappings.
+```bash
+export DB_URL='jdbc:mysql://localhost:3306/smart_queue'
+export DB_USERNAME='root'
+read -s "DB_PASSWORD?Enter your MySQL password: "
+echo
+export DB_PASSWORD
+```
 
-## Useful pages
+If your MySQL root account does not have a password, use:
 
-- `/` — project home
-- `/register` — customer registration
-- `/track` — look up an existing token
-- `/display` — public queue display
-- `/token/{number}` — token details
+```bash
+unset DB_PASSWORD
+```
 
-## Queue logic
+**4. Start the application**
 
-Waiting tokens are sorted by priority rank (smaller rank means higher priority), then creation time, then database ID. This means priority takes precedence over arrival time, while customers within the same priority category retain FIFO order.
+```bash
+chmod +x mvnw
+./mvnw spring-boot:run
+```
 
-The waiting-time value is an estimate, not a prediction. It sums the configured average service durations for customers ahead in the queue and includes a simple allowance for any currently serving token. Actual wait times can differ.
+**5. Open the application**
+
+Visit [http://localhost:8080](http://localhost:8080) in your browser.
+
+The predefined services are added automatically when the application starts. Hibernate also updates the development database schema based on the entity classes.
+
+## Application pages
+
+| Page | URL |
+|---|---|
+| Home | `/` |
+| Customer registration | `/register` |
+| Token tracking | `/track` |
+| Public queue display | `/display` |
+| Token details | `/token/{number}` |
+
+## How the queue works
+
+Each token is assigned a priority when it is generated.
+
+The system uses three priority levels:
+
+1. Emergency/VIP
+2. Assisted
+3. Regular
+
+Customers with a higher priority are placed ahead of those with a lower priority. If two customers have the same priority, the one who registered first is placed ahead.
+
+The system also uses the database ID as a final tie-breaker when two tokens have the same creation time.
+
+Waiting time is calculated using the average service duration configured for each service. The estimated time includes the customers ahead in the queue and a small allowance for a customer who is currently being served.
+
+These values are only estimates, since actual service times can vary.
