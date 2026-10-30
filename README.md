@@ -1,132 +1,108 @@
 # Smart Queue Management System
 
-A Java-based queue management system that allows customers to register for services, receive tokens, and check their queue position and estimated waiting time.
+This project is a Java-based queue management system designed for places like hospitals, banks, and college offices, where customers often have to wait for their turn.
 
-This is an early version of the project, built to demonstrate token generation and priority-based queue management.
+The idea is to make the process easier by generating tokens and arranging customers based on their priority. I've started with the basic queue functionality and will be adding the staff-side features in later stages.
 
-## Features implemented
+## Implementation
 
-- Customer registration and service selection
-- Automatic token generation
-- Three customer priority categories:
-  - Emergency / VIP
-  - Senior Citizen / Assisted
-  - Regular
-- Priority-based queue ordering
-- FIFO processing within each priority category
-- Token tracking
-- Queue position and estimated waiting time
-- Database storage using H2
+The current version includes:
 
-## Technologies used
+- Customer registration with basic input validation.
+- A list of predefined services that customers can choose from.
+- Automatic token generation using the priority, service code, and database ID.
+- Three priority categories: Emergency/VIP, Assisted, and Regular.
+- Queue arrangement based on priority, while maintaining first-come-first-served order within each category.
+- A page where customers can check their token details and queue position.
+- A public page showing the current waiting queue, which refreshes periodically.
+- A basic waiting-time estimate using the average time assigned to each service.
+- MySQL database integration for storing customer and token details.
+  
+
+## Technologies 
 
 - Java 21
-- Spring Boot
+- Spring Boot 3.4.5
 - Spring MVC
-- Spring Data JPA
-- Hibernate
-- H2 Database
-- Maven
 - Thymeleaf
+- Spring Data JPA and Hibernate
+- MySQL 8
+- Maven
 - HTML, CSS and JavaScript
+- JUnit 5 and H2 for testing
 
-## Running the project locally
+## Running the project
 
-You do not need MySQL or any external database installation. Follow these steps.
+Make sure Java 21 and MySQL are installed before starting.
 
-### 1. Install Java
+**1. Create the database**
 
-Make sure Java 21 is installed.
+Open MySQL and run:
 
-Check your Java version using:
+```sql
+CREATE DATABASE smart_queue;
+```
+
+**2. Open the project folder**
+
+Navigate to the project directory in Terminal.
+
+**3. Set up the database connection**
+
+For a MySQL root account with a password, run:
 
 ```bash
-java -version
+export DB_URL='jdbc:mysql://localhost:3306/smart_queue'
+export DB_USERNAME='root'
+read -s "DB_PASSWORD?Enter your MySQL password: "
+echo
+export DB_PASSWORD
 ```
 
-### 2. Download or clone the project
-
-If you are using GitHub:
+If your MySQL root account does not have a password, use:
 
 ```bash
-git clone YOUR_REPOSITORY_URL
+unset DB_PASSWORD
 ```
 
-Move into the project directory:
-
-```bash
-cd Smart-Queue-Management-System-Phase1
-```
-
-If you have already downloaded and extracted the project, simply open Terminal and navigate to its folder.
-
-### 3. Configure the H2 database
-
-The project uses an embedded H2 database. No separate database server is required.
-
-Make sure the H2 dependency is included in `pom.xml` and that `application.properties` is configured to use H2.
-
-Example configuration:
-
-```properties
-spring.datasource.url=jdbc:h2:file:./data/smartqueue
-spring.datasource.driver-class-name=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
-```
-
-### 4. Run the application
-
-Give the Maven wrapper execution permission:
+**4. Start the application**
 
 ```bash
 chmod +x mvnw
-```
-
-Start the application:
-
-```bash
 ./mvnw spring-boot:run
 ```
 
-Wait until Spring Boot finishes starting. You should see a message indicating that the application has started.
+**5. Open the application**
 
-### 5. Open the application
+Visit [http://localhost:8080](http://localhost:8080) in your browser.
 
-Open your browser and visit:
+The predefined services are added automatically when the application starts. Hibernate also updates the development database schema based on the entity classes.
 
-**http://localhost:8080**
+## Application pages
 
-You can now register customers, generate tokens, and track their queue positions.
+| Page | URL |
+|---|---|
+| Home | `/` |
+| Customer registration | `/register` |
+| Token tracking | `/track` |
+| Public queue display | `/display` |
+| Token details | `/token/{number}` |
 
-### 6. Access the H2 database console (optional)
+## How the queue works
 
-To inspect the database, open:
+Each token is assigned a priority when it is generated.
 
-**http://localhost:8080/h2-console**
+The system uses three priority levels:
 
-Use the following connection details:
-
-- JDBC URL: `jdbc:h2:file:./data/smartqueue`
-- Username: `sa`
-- Password: Leave blank
-
-Click **Connect** to view the database tables and stored records.
-
-## Queue management logic
-
-Customers are arranged according to their priority:
-
-1. Emergency / VIP
-2. Senior Citizen / Assisted
+1. Emergency/VIP
+2. Assisted
 3. Regular
 
-Customers belonging to the same priority category are processed in the order in which they registered.
+Customers with a higher priority are placed ahead of those with a lower priority. If two customers have the same priority, the one who registered first is placed ahead.
 
-The system generates a unique token using the customer's priority, selected service, and database-generated ID.
+The system also uses the database ID as a final tie-breaker when two tokens have the same creation time.
+
+Waiting time is calculated using the average service duration configured for each service. The estimated time includes the customers ahead in the queue and a small allowance for a customer who is currently being served.
+
+These values are only estimates, since actual service times can vary.
+
